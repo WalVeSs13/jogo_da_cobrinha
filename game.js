@@ -1,6 +1,3 @@
-// =============================
-// CONFIGURAÇÕES
-// =============================
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 const scoreEl = document.getElementById("score");
@@ -22,15 +19,11 @@ const gameState = {
   gameOver: false
 };
 
-// =============================
-// INICIALIZAÇÃO
-// =============================
 function init() {
   resetGame();
   document.addEventListener("keydown", handleKeyPress);
   intervalId = setInterval(gameLoop, GAME_SPEED);
 
-  // Botão Play
   document.getElementById("play-btn").addEventListener("click", () => {
     if (!gameState.started) {
       gameState.started = true;
@@ -43,48 +36,47 @@ function init() {
     }
   });
 
-  // Botão Controles
   document.getElementById("controls-btn").addEventListener("click", () => {
-    const controlsDiv = document.getElementById("controls-div");
-    controlsDiv.style.display = "block";
+    document.getElementById("controls-div").style.display = "block";
     document.querySelector('.buttons').style.display = 'none';
   });
 
-  // Botão Créditos
   document.getElementById("credits-btn").addEventListener("click", () => {
-    const creditsDiv = document.getElementById("credits-div");
-    creditsDiv.style.display = "block";
+    document.getElementById("credits-div").style.display = "block";
     document.querySelector('.buttons').style.display = 'none';
   });
 
-  // Botão Voltar Controles
   document.getElementById("back-controls-btn").addEventListener("click", () => {
-    const controlsDiv = document.getElementById("controls-div");
-    controlsDiv.style.display = "none";
+    document.getElementById("controls-div").style.display = "none";
     document.querySelector('.buttons').style.display = 'flex';
   });
 
-  // Botão Voltar Créditos
   document.getElementById("back-credits-btn").addEventListener("click", () => {
-    const creditsDiv = document.getElementById("credits-div");
-    creditsDiv.style.display = "none";
+    document.getElementById("credits-div").style.display = "none";
     document.querySelector('.buttons').style.display = 'flex';
   });
 
-  // Botão Jogar outra
   document.getElementById("play-again-btn").addEventListener("click", () => {
     resetGame();
     gameState.started = true;
     gameState.running = true;
     document.getElementById("game-over-buttons").style.display = "none";
-    messageEl.textContent = "";
+    document.querySelector('.buttons').style.display = "none";
   });
 
-  // Botão Inicio
   document.getElementById("home-btn").addEventListener("click", () => {
-    resetGame();
-    document.getElementById("game-over-buttons").style.display = "none";
+    showHomeScreen();
   });
+}
+
+function showHomeScreen() {
+  resetGame();
+
+  document.getElementById("game-over-buttons").style.display = "none";
+  document.getElementById("controls-div").style.display = "none";
+  document.getElementById("credits-div").style.display = "none";
+
+  document.querySelector('.buttons').style.display = "flex";
 }
 
 function resetGame() {
@@ -92,26 +84,20 @@ function resetGame() {
   gameState.direction = "RIGHT";
   gameState.food = generateFood();
   gameState.score = 0;
-  gameState.running = false; // começa pausado
+  gameState.running = false;
   gameState.started = false;
   gameState.gameOver = false;
+
   scoreEl.textContent = 0;
-  messageEl.textContent = "";
-  clearCanvas(); // Limpa o canvas para remover qualquer frame anterior
+  clearCanvas();
 }
 
-// =============================
-// LOOP PRINCIPAL
-// =============================
 function gameLoop() {
   if (!gameState.running) return;
   update();
   draw();
 }
 
-// =============================
-// ATUALIZAÇÃO DO JOGO
-// =============================
 function update() {
   const head = { ...gameState.snake[0] };
 
@@ -161,13 +147,12 @@ function isEating(head) {
          head.y === gameState.food.y;
 }
 
-// =============================
-// DESENHO
-// =============================
+
 function draw() {
   clearCanvas();
   drawFood();
   drawSnake();
+
   if (gameState.gameOver) {
     drawGameOver();
   }
@@ -191,25 +176,35 @@ function drawFood() {
 }
 
 function drawGameOver() {
-  // Desenhar overlay semi-transparente
   ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
   ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
-  // Desenhar texto
   ctx.fillStyle = "#0f0";
   ctx.font = "16px Kavoon";
   ctx.textAlign = "center";
-  ctx.fillText(`💀 Game Over! Pontuação: ${gameState.score}`, CANVAS_SIZE / 2, CANVAS_SIZE / 2 - 40);
+  ctx.fillText(
+    `💀 Game Over! Pontuação: ${gameState.score}`,
+    CANVAS_SIZE / 2,
+    CANVAS_SIZE / 2 - 40
+  );
 }
 
-// =============================
-// UTILITÁRIOS
-// =============================
 function generateFood() {
-  return {
-    x: Math.floor(Math.random() * (CANVAS_SIZE / GRID_SIZE)) * GRID_SIZE,
-    y: Math.floor(Math.random() * (CANVAS_SIZE / GRID_SIZE)) * GRID_SIZE
-  };
+  let newFood;
+  let validPosition = false;
+
+  while (!validPosition) {
+    newFood = {
+      x: Math.floor(Math.random() * (CANVAS_SIZE / GRID_SIZE)) * GRID_SIZE,
+      y: Math.floor(Math.random() * (CANVAS_SIZE / GRID_SIZE)) * GRID_SIZE
+    };
+
+    validPosition = !gameState.snake.some(segment =>
+      segment.x === newFood.x && segment.y === newFood.y
+    );
+  }
+
+  return newFood;
 }
 
 function handleKeyPress(event) {
@@ -230,30 +225,23 @@ function handleKeyPress(event) {
 
   const newDirection = keyMap[event.key];
 
-  // Inicia o jogo na primeira tecla pressionada (mas agora só com botão Play)
-  // Removido para forçar uso do botão Play
-
-  // Pausar/Continuar
   if (event.key === "p" || event.key === "P") {
     gameState.running = !gameState.running;
-    messageEl.textContent = gameState.running ? "" : "⏸ Pausado | Pressione P para continuar";
+    messageEl.textContent = gameState.running
+      ? ""
+      : "⏸ Pausado | Pressione P para continuar";
     return;
   }
 
-  // Reiniciar o jogo
   if (event.key === "r" || event.key === "R") {
     resetGame();
     gameState.running = true;
-    messageEl.textContent = "";
-    document.querySelector('.buttons').style.display = 'none';
+    document.querySelector('.buttons').style.display = "none";
     return;
   }
 
-  // Voltar para tela inicial
   if (event.key === "Escape") {
-    resetGame();
-    document.getElementById("controls-div").style.display = "none";
-    document.getElementById("credits-div").style.display = "none";
+    showHomeScreen();
     return;
   }
 
@@ -277,7 +265,4 @@ function endGame() {
   document.getElementById("game-over-buttons").style.display = "flex";
 }
 
-// =============================
-// START
-// =============================
 init();
