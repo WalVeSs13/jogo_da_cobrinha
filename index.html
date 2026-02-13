@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Cobrinha </title>
+
+  <!-- Fonte Kavoon -->
+  <link href="https://fonts.googleapis.com/css2?family=Kavoon&display=swap" rel="stylesheet">
+
+  
+  <!-- Favicon: ícone da cobra -->
+  <link rel="icon" href="https://twemoji.maxcdn.com/v/latest/72x72/1f40d.png" type="image/png">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <h1>🐍 Jogo da Cobrinha</h1>
+  <div class="game-container">
+    <canvas id="game" width="400" height="400"></canvas>
+    <div class="score">Pontuação: <span id="score">0</span></div>
+    <div class="buttons">
+      <button id="play-btn">Play</button>
+      <button id="controls-btn">Controles</button>
+      <button id="credits-btn">Créditos</button>
+    </div>
+    <div class="game-over-buttons" id="game-over-buttons" style="display: none;">
+      <button id="play-again-btn">Tentar novamente</button>
+      <button id="home-btn">Inicio</button>
+    </div>
+  <div class="controls" id="controls-div" style="display: none;">
+    Movimentação: Setas(Cima, Esquerda, Baixo e Direita) ou as teclas W,A,S,D <br> Pausar/Continuar: P <br> Reiniciar: R  <br> Voltar menu inicial: Esc
+    <br><br>
+    <button id="back-controls-btn">Voltar</button>
+  </div>
+  <div class="credits" id="credits-div" style="display: none;">
+    Desenvolvido por Hellon Alves
+    <br><br>
+    <button id="back-credits-btn">Voltar</button>
+  </div>
+  </div>
+  <div class="message" id="message">Pressione qualquer tecla para iniciar!</div>
+
+  <script src="game.js"></script>
+
+</body>
+</html>
